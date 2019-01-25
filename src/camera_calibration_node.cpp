@@ -43,7 +43,7 @@ private:
                     board_size,
                     centers,
                     CALIB_CB_ASYMMETRIC_GRID,
-                    detector.create(params));
+                    detector.create());
 
     cornerSubPix(image_gray,
                  centers,
@@ -55,39 +55,51 @@ private:
   bool calibrate(camera_calibration::calibrate::Request  &req,
                  camera_calibration::calibrate::Response &res)
   {
-    Mat image;
     if(!img_ptr) return false;
-    else
-    {
-      lock_guard<mutex> lock(img_mutex);
-      image = cv_bridge::toCvShare(img_ptr, "mono8")->image;
-    }
 
     vector<Mat> total_centers;
     vector<vector<Point3f>> total_object;
 
     vector<Point3f> object_points;
 
-    for(int i=0; i<board_size.height;i++)
+    for(int i=0; i<5; i++)
     {
-      for(int j=0; j<board_size.width;j++)
+      for(int j=0; j<4; j++)
       {
         Point3f realPoint;
-        realPoint.x = i*10;
-        realPoint.y = j*10;
+        realPoint.x = j*32;
+        realPoint.y = i*32;
+        realPoint.z = 0;
+        object_points.push_back(realPoint);
+        realPoint.x = j*32+16;
+        realPoint.y = i*32+16;
         realPoint.z = 0;
         object_points.push_back(realPoint);
       }
     }
+    for(int j=0; j<4; j++)
+    {
+      Point3f realPoint;
+      realPoint.x = j*32;
+      realPoint.y = 5*32;
+      realPoint.z = 0;
+      object_points.push_back(realPoint);
+    }
 
+    Size image_size;
     int picture_id;
     for (int i=0; i<20; i++)
     {
       Mat image_rgb  = cv_bridge::toCvShare(img_ptr, "bgr8") ->image,
           image_gray = cv_bridge::toCvShare(img_ptr, "mono8")->image;
 
-      resize(image_rgb,image_rgb,Size(image_rgb.cols/8,image_rgb.rows/8));
-      resize(image_gray,image_gray,Size(image_gray.cols/8,image_gray.rows/8));
+      for (int j=0; j<3; j++)
+      {
+      pyrDown(image_rgb,image_rgb);
+      pyrDown(image_gray,image_gray);
+      }
+      image_size = image_gray.size();
+
       Mat centers;
       detectcenters(image_gray,centers);
       total_centers.push_back(centers);
@@ -98,6 +110,7 @@ private:
                             board_size,
                             centers,
                             true);
+
       while(picture_id == img_ptr->header.seq)
       {
         imshow("chessboard",image_rgb);
@@ -112,10 +125,10 @@ private:
                 distCoeffs;
     vector<Mat> rvecs,
                 tvecs;
-    return true;
+
     calibrateCamera(total_object,
                     total_centers,
-                    image.size(),
+                    image_size,
                     cameraMatrix,
                     distCoeffs,
                     rvecs,

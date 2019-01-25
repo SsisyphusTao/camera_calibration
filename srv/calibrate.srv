@@ -1,0 +1,7 @@
+# Conduct a calibration and save params to camera_params.yaml in the 'params' folder
+#
+# Returns success status
+
+
+---
+bool success

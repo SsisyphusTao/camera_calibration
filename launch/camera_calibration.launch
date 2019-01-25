@@ -1,4 +1,5 @@
 <launch>
+  <!--using 'find' command for portability-->
   <node pkg="camera_calibration" type="images_pub" name="images_pub" output="screen">
     <param name="images_path" type="string" value="$(find camera_calibration)/images/" />
   </node>

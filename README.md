@@ -15,4 +15,4 @@ Remaining problems:
 
 
 ---------
-For more details: [Calibrate_camera_intrinsics_with_circle_pattern](camera_calibration/Calibrate_camera_intrinsics_with_circle_pattern.pdf)
+For more details: [Calibrate_camera_intrinsics_with_circle_pattern](https://github.com/SsisyphusTao/camera_calibration/blob/master/Calibrate_camera_intrinsics_with_circle_pattern.pdf)

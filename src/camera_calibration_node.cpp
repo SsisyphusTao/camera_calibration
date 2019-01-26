@@ -39,14 +39,14 @@ private:
 
   void detectcenters(Mat image_gray, Mat& centers)
   {
-    //Detect the middle points of circles
+    //Detect the center points of blobs
     findCirclesGrid(image_gray,
                     board_size,
                     centers,
                     CALIB_CB_ASYMMETRIC_GRID,
                     detector.create());
 
-    //Get subpix for more percise result
+    //Get subpix for more precise result
     cornerSubPix(image_gray,
                  centers,
                  Size(5,5),
